@@ -6,15 +6,86 @@
     <title>Trabalho</title>
 </head>
 <body>
-    <h1>CineTrack</h1>
-    <p> <strong>CineTrack </strong> é o seu gerenciador pessoal de filmes: registre o que ja viu, o que está vendo e o que quer ver </p>
-    <a href="adicionar.html">+ Adicionar filme</a>
-    <h2> <strong> Status possiveis </strong></h2>
-    <ul> <li>assistido</li>  <li>assistindo</li>  <li>querendo assistir</li></ul>
-    <h2><strong>Meus filmes favoritos</strong></h2>
-    <ol> <li>a origem</li>  <li>interestrelar</li>  <li>parasita</li></ol>
-    <h2><strong>Sobre a origem</strong></h2>
-    <dl><dt>Diretor</dt> <dd>Christopher Nolan</dd><dt>Ano</dt> <dd>2010</dd><dt>Gênero</dt> <dd>Ficção científica</dd></dl>
-    <p>&copy;CineTrack</p>
+    <header>
+        <h1>CineTrack</h1>
+        <input type="search" id="busca" name="busca" aria-label="Buscar filme">
+        <button type="button" onclick="window.location.href='adicionar.html'">+ Adicionar</button>
+    </header>
+
+    <nav aria-label="Filtros de status">
+        <button type="button" class="ativo">Todos</button>
+        <button type="button">Assistido</button>
+        <button type="button">Assistindo</button>
+        <button type="button">Quero assistir</button>
+    </nav>
+
+    <main>
+        <section id="lista" aria-live="polite">
+            <h2>Filmes</h2>
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w200/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg" alt="Pôster do filme A Origem" width="80" height="120">
+                <h2>A Origem</h2>
+                <p>2010 · Ficção científica</p>
+                <p>Nota: <span role="img" aria-label="Nota: 5 de 5">★★★★★</span></p>
+                <span class="badge">Assistido</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w200/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" alt="Pôster do filme Parasita" width="80" height="120">
+                <h2>Parasita</h2>
+                <p>2019 · Suspense</p>
+                <p>Nota: <span role="img" aria-label="Nota: 5 de 5">★★★★★</span></p>
+                <span class="badge">Assistido</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w500/imcOp1kJsCsAFCoOtY5OnPrFbAf.jpg" alt="Pôster do filme O Auto da Compadecida" width="80" height="120">
+                <h2>O Auto da Compadecida</h2>
+                <p>2000 · Comédia</p>
+                <p>Nota: <span role="img" aria-label="Nota: 5 de 5">★★★★★</span></p>
+                <span class="badge">Assistido</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg" alt="Pôster do filme Duna: Parte Dois" width="80" height="120">
+                <h2>Duna: Parte Dois</h2>
+                <p>2024 · Ficção científica</p>
+                <p>Nota: <span role="img" aria-label="Nota: 5 de 5">★★★★★</span></p>
+                <span class="badge">Assistido</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w200/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg" alt="Pôster do filme Interestelar" width="80" height="120">
+                <h2>Interestelar</h2>
+                <p>2014 · Ficção científica</p>
+                <p>Nota: <span role="img" aria-label="Nota: 5 de 5">★★★★★</span></p>
+                <span class="badge">Quero assistir</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+
+            <article class="card">
+                <img src="https://image.tmdb.org/t/p/w500/gfnXixcGC060QcG6JPxN6AMdVsq.jpg" alt="Pôster do filme Cidade de Deus" width="80" height="120">
+                <h2>Cidade de Deus</h2>
+                <p>2002 · Drama</p>
+                <p>Nota: <span role="img" aria-label="Nota: 4 de 5">★★★★☆</span></p>
+                <span class="badge">Quero assistir</span>
+                <button type="button">Editar</button>
+                <button type="button">Remover</button>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <a href="adicionar.html">Adicionar filme</a>
+    </footer>
 </body>
 </html>
