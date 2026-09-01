@@ -19,14 +19,16 @@ body {
 header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
+    flex-wrap: wrap;
     padding: 24px max(24px, calc((100% - 960px) / 2));
     color: #FFFFFF;
     background: #243B5A;
 }
 
 header h1 {
-    margin-right: auto;
+    flex: 0 0 auto;
     font-size: 1.8rem;
 }
 
@@ -38,6 +40,7 @@ button {
 }
 
 header input {
+    flex: 1 1 240px;
     width: min(260px, 35vw);
     padding: 8px 10px;
     border: 1px solid #FFFFFF;
@@ -69,30 +72,45 @@ footer {
 nav {
     display: flex;
     gap: 8px;
-    padding: 20px 0;
+    flex-wrap: wrap;
+    padding: 12px 24px;
 }
 
-nav button.ativo,
+nav button {
+    padding: 6px 14px;
+    border: 1px solid #243B5A;
+    background: #FFFFFF;
+    border-radius: 999px;
+}
+
+nav button.ativo {
+    color: #FFFFFF;
+    background: #243B5A;
+}
+
 nav button:hover {
     color: #FFFFFF;
     background: #E76F51;
 }
 
+/* Os cards sao filhos de #lista, nao de main. */
 #lista {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
-    padding-bottom: 32px;
+    padding: 16px 24px;
 }
 
 #lista > h2 {
+    flex-basis: 100%;
     font-size: 1.5rem;
 }
 
 .card {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    column-gap: 16px;
-    row-gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 200px;
     padding: 16px;
     border: 1px solid #D8DDE3;
     border-radius: 8px;
@@ -101,7 +119,6 @@ nav button:hover {
 }
 
 .card img {
-    grid-row: span 5;
     width: 80px;
     height: 120px;
     object-fit: cover;
@@ -126,10 +143,14 @@ nav button:hover {
 }
 
 .card button {
-    width: fit-content;
-    margin-right: 4px;
     padding: 3px 8px;
     font-size: 0.85rem;
+}
+
+.card .acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
 }
 
 footer {
