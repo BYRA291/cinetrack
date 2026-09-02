@@ -22,14 +22,15 @@ header {
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
-    padding: 24px max(24px, calc((100% - 960px) / 2));
+    padding: 24px max(16px, calc((100% - 960px) / 2));
     color: #FFFFFF;
     background: #243B5A;
 }
 
 header h1 {
     flex: 0 0 auto;
-    font-size: 1.8rem;
+    width: 100%;
+    font-size: clamp(1.8rem, 6vw, 2.2rem);
 }
 
 input,
@@ -40,8 +41,8 @@ button {
 }
 
 header input {
-    flex: 1 1 240px;
-    width: min(260px, 35vw);
+    flex: 1;
+    width: auto;
     padding: 8px 10px;
     border: 1px solid #FFFFFF;
     border-radius: 4px;
@@ -62,10 +63,14 @@ header button {
     background: #E76F51;
 }
 
+.texto-completo {
+    display: none;
+}
+
 nav,
 main,
 footer {
-    width: min(960px, calc(100% - 48px));
+    width: min(100% - 32px, 960px);
     margin: 0 auto;
 }
 
@@ -95,14 +100,14 @@ nav button:hover {
 
 /* Os cards sao filhos de #lista, nao de main. */
 #lista {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
     padding: 16px 24px;
 }
 
 #lista > h2 {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
     font-size: 1.5rem;
 }
 
@@ -110,7 +115,6 @@ nav button:hover {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    width: 200px;
     padding: 16px;
     border: 1px solid #D8DDE3;
     border-radius: 8px;
@@ -119,8 +123,9 @@ nav button:hover {
 }
 
 .card img {
-    width: 80px;
-    height: 120px;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    height: auto;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -166,7 +171,7 @@ body > a,
 body > h1,
 body > form {
     display: block;
-    width: min(560px, calc(100% - 48px));
+    width: min(100% - 32px, 560px);
     margin-right: auto;
     margin-left: auto;
 }
@@ -180,26 +185,31 @@ body > h1 {
     margin-bottom: 20px;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 1024px) {
     header {
-        flex-wrap: wrap;
-    }
-
-    header h1 {
-        width: 100%;
+        gap: 24px;
+        padding: 24px max(24px, calc((100% - 960px) / 2));
     }
 
     header input {
-        flex: 1;
-        width: auto;
+        flex: 1 1 240px;
+        width: min(260px, 35vw);
     }
 
-    nav,
-    main,
-    footer,
-    body > a,
-    body > h1,
-    body > form {
-        width: min(100% - 32px, 960px);
+    header h1 {
+        width: auto;
+        font-size: 2.6rem;
+    }
+
+    #lista {
+        gap: 24px;
+    }
+
+    .texto-curto {
+        display: none;
+    }
+
+    .texto-completo {
+        display: inline;
     }
 }
