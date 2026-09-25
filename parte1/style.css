@@ -207,6 +207,13 @@ nav button:hover {
     border-radius: 4px;
 }
 
+.rascunho-tela {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+}
+
 .card h2 {
     font-size: 1.15rem;
 }
