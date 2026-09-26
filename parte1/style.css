@@ -283,6 +283,77 @@ body > h1 {
     margin-bottom: 20px;
 }
 
+body > form {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    padding: 24px;
+    margin-bottom: 40px;
+}
+
+#form-filme {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#form-filme label {
+    font-weight: 700;
+    color: var(--cor-texto);
+}
+
+#form-filme input,
+#form-filme select,
+#form-filme textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    background: var(--cor-superficie);
+    color: var(--cor-texto);
+    font: inherit;
+}
+
+#form-filme textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.botoes-form {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.btn {
+    min-width: 110px;
+}
+
+.btn-secundario {
+    background: var(--cor-superficie);
+    color: var(--cor-primaria);
+}
+
+.btn-primario {
+    background: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+    color: #FFFFFF;
+}
+
+.btn-primario:hover {
+    background: var(--cor-acento);
+    border-color: var(--cor-acento);
+    color: #FFFFFF;
+}
+
 @media (min-width: 1024px) {
     header {
         gap: var(--espaco-grande);
