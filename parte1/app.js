@@ -63,6 +63,7 @@ const filmesIniciais = [
 
 let filmes = [...filmesIniciais];
 let filtroAtivo = "todos";
+let editandoId = null;
 
 function rotuloStatus(status) {
   if (status === "assistido") return "Assistido";
@@ -79,26 +80,67 @@ const estrelas = (nota) => {
   return texto;
 };
 
+function criarCard(filme) {
+  const card = document.createElement("article");
+  card.classList.add("card");
+  card.dataset.id = filme.id;
+
+  const poster = document.createElement("img");
+  poster.src = filme.poster;
+  poster.alt = `Pôster do filme ${filme.titulo}`;
+  poster.width = 80;
+  poster.height = 120;
+
+  const titulo = document.createElement("h2");
+  titulo.textContent = filme.titulo;
+
+  const informacoes = document.createElement("p");
+  informacoes.textContent = `${filme.ano} · ${filme.genero}`;
+
+  const avaliacao = document.createElement("p");
+  avaliacao.textContent = "Nota: ";
+
+  const iconesNota = document.createElement("span");
+  iconesNota.setAttribute("role", "img");
+  iconesNota.setAttribute("aria-label", `Nota: ${filme.nota} de 5`);
+  iconesNota.textContent = estrelas(filme.nota);
+  avaliacao.append(iconesNota);
+
+  const badge = document.createElement("span");
+  badge.classList.add("badge", filme.status);
+  badge.textContent = rotuloStatus(filme.status);
+
+  const acoes = document.createElement("div");
+  acoes.classList.add("acoes");
+
+  const botaoEditar = document.createElement("button");
+  botaoEditar.type = "button";
+  botaoEditar.classList.add("btn-editar");
+  botaoEditar.textContent = "Editar";
+
+  const botaoRemover = document.createElement("button");
+  botaoRemover.type = "button";
+  botaoRemover.classList.add("btn-remover");
+  botaoRemover.textContent = "Remover";
+
+  acoes.append(botaoEditar, botaoRemover);
+  card.append(poster, titulo, informacoes, avaliacao, badge, acoes);
+
+  return card;
+}
+
 function renderizarCards(lista) {
   const secaoLista = document.querySelector("#lista");
 
   if (!secaoLista) return;
 
-  const cards = lista.map((filme) => `
-    <article class="card" data-id="${filme.id}">
-      <img src="${filme.poster}" alt="Pôster do filme ${filme.titulo}" width="80" height="120">
-      <h2>${filme.titulo}</h2>
-      <p>${filme.ano} · ${filme.genero}</p>
-      <p>Nota: <span role="img" aria-label="Nota: ${filme.nota} de 5">${estrelas(filme.nota)}</span></p>
-      <span class="badge ${filme.status}">${rotuloStatus(filme.status)}</span>
-      <div class="acoes">
-        <button type="button" class="btn-editar">Editar</button>
-        <button type="button" class="btn-remover">Remover</button>
-      </div>
-    </article>
-  `).join("");
+  const titulo = document.createElement("h2");
+  titulo.textContent = "Filmes";
 
-  secaoLista.innerHTML = `<h2>Filmes</h2>${cards}`;
+  const fragmento = document.createDocumentFragment();
+  lista.forEach((filme) => fragmento.append(criarCard(filme)));
+
+  secaoLista.replaceChildren(titulo, fragmento);
 }
 
 function filtrarPorStatus(status) {
@@ -114,14 +156,143 @@ function atualizarTotal() {
   }
 }
 
+function gerarId() {
+  const ids = filmes.map((filme) => filme.id);
+  return ids.length === 0 ? 1 : Math.max(...ids) + 1;
+}
+
+function validarFilme(filme) {
+  const erros = [];
+
+  if (!filme.titulo.trim()) erros.push("Informe o título.");
+  if (!Number.isInteger(filme.ano) || filme.ano < 1888 || filme.ano > 2030) {
+    erros.push("Informe um ano entre 1888 e 2030.");
+  }
+  if (!filme.genero.trim()) erros.push("Informe o gênero.");
+  if (!['quero', 'assistindo', 'assistido'].includes(filme.status)) {
+    erros.push("Selecione um status válido.");
+  }
+  if (!Number.isInteger(filme.nota) || filme.nota < 1 || filme.nota > 5) {
+    erros.push("Informe uma nota entre 1 e 5.");
+  }
+
+  if (filme.poster) {
+    try {
+      new URL(filme.poster);
+    } catch {
+      erros.push("Informe uma URL de pôster válida.");
+    }
+  }
+
+  return erros;
+}
+
+const modal = document.querySelector("#modal");
+const formulario = document.querySelector("#form-filme");
+const errosForm = document.querySelector("#erros-form");
+const tituloModal = document.querySelector("#titulo-modal");
+
+function mostrarErros(erros) {
+  errosForm.replaceChildren();
+
+  if (erros.length === 0) return;
+
+  const lista = document.createElement("ul");
+  erros.forEach((erro) => {
+    const item = document.createElement("li");
+    item.textContent = erro;
+    lista.append(item);
+  });
+  errosForm.append(lista);
+}
+
+function abrir() {
+  formulario.reset();
+  editandoId = null;
+  mostrarErros([]);
+  tituloModal.textContent = "Adicionar filme";
+  modal.hidden = false;
+  formulario.elements.titulo.focus();
+}
+
+function fechar() {
+  modal.hidden = true;
+  editandoId = null;
+  mostrarErros([]);
+}
+
+function abrirEdicao(filme) {
+  abrir();
+  editandoId = filme.id;
+  tituloModal.textContent = "Editar filme";
+
+  formulario.elements.titulo.value = filme.titulo;
+  formulario.elements.ano.value = filme.ano;
+  formulario.elements.genero.value = filme.genero;
+  formulario.elements.poster.value = filme.poster;
+  formulario.elements.status.value = filme.status;
+  formulario.elements.nota.value = filme.nota;
+  formulario.elements.comentario.value = filme.comentario;
+}
+
 renderizarCards(filmes);
 atualizarTotal();
+
+document.querySelector("#btn-adicionar").addEventListener("click", abrir);
+document.querySelector("#btn-cancelar").addEventListener("click", fechar);
+
+document.addEventListener("keydown", (evento) => {
+  if (evento.key === "Escape" && !modal.hidden) fechar();
+});
+
+formulario.addEventListener("submit", (evento) => {
+  evento.preventDefault();
+
+  const dados = Object.fromEntries(new FormData(formulario));
+  const filme = {
+    ...dados,
+    titulo: dados.titulo.trim(),
+    ano: Number(dados.ano),
+    genero: dados.genero.trim(),
+    poster: dados.poster.trim(),
+    nota: Number(dados.nota),
+    comentario: dados.comentario.trim()
+  };
+  const erros = validarFilme(filme);
+
+  if (erros.length > 0) {
+    mostrarErros(erros);
+    return;
+  }
+
+  if (editandoId === null) {
+    filmes = [...filmes, { ...filme, id: gerarId() }];
+  } else {
+    filmes = filmes.map((item) =>
+      item.id === editandoId ? { ...item, ...filme } : item
+    );
+  }
+
+  renderizarCards(filtrarPorStatus(filtroAtivo));
+  atualizarTotal();
+  fechar();
+});
 
 const secaoLista = document.querySelector("#lista");
 
 if (secaoLista) {
   secaoLista.addEventListener("click", (evento) => {
+    const botaoEditar = evento.target.closest(".btn-editar");
     const botaoRemover = evento.target.closest(".btn-remover");
+
+    if (botaoEditar) {
+      const card = botaoEditar.closest(".card");
+      const id = Number(card.dataset.id);
+      const filme = filmes.find((item) => item.id === id);
+
+      if (filme) abrirEdicao(filme);
+      return;
+    }
 
     if (!botaoRemover) return;
 

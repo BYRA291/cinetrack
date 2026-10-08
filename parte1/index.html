@@ -10,7 +10,7 @@
     <header>
         <h1>CineTrack</h1>
         <input type="search" id="busca" name="busca" aria-label="Buscar filme">
-        <button type="button" onclick="window.location.href='adicionar.html'">
+        <button type="button" id="btn-adicionar">
             <span class="texto-curto">+</span>
             <span class="texto-completo">+ Adicionar</span>
         </button>
@@ -35,9 +35,11 @@
 
     <div id="modal" hidden>
         <div class="modal-conteudo">
-            <h1>Adicionar filme</h1>
+            <h1 id="titulo-modal">Adicionar filme</h1>
 
-        <form id="form-filme">
+        <form id="form-filme" novalidate>
+            <div id="erros-form" role="alert" aria-live="assertive"></div>
+
             <div>
                 <label for="titulo">Título</label><br>
                 <input type="text" id="titulo" name="titulo" required>
@@ -65,9 +67,9 @@
             <div>
                 <label for="status">Status</label><br>
                 <select id="status" name="status" required>
-                    <option value="Quero assistir">Quero assistir</option>
-                    <option value="Assistindo">Assistindo</option>
-                    <option value="Assistido">Assistido</option>
+                    <option value="quero">Quero assistir</option>
+                    <option value="assistindo">Assistindo</option>
+                    <option value="assistido">Assistido</option>
                 </select>
             </div>
             <br>
@@ -85,7 +87,7 @@
             <br>
 
             <div>
-                <button type="button" onclick="window.location.href='index.html'">Cancelar</button>
+                <button type="button" id="btn-cancelar">Cancelar</button>
                 <button type="submit">Salvar</button>
             </div>
         </form>
