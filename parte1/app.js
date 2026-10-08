@@ -61,6 +61,9 @@ const filmesIniciais = [
   }
 ];
 
+let filmes = [...filmesIniciais];
+let filtroAtivo = "todos";
+
 function rotuloStatus(status) {
   if (status === "assistido") return "Assistido";
   if (status === "assistindo") return "Assistindo";
@@ -89,8 +92,8 @@ function renderizarCards(lista) {
       <p>Nota: <span role="img" aria-label="Nota: ${filme.nota} de 5">${estrelas(filme.nota)}</span></p>
       <span class="badge ${filme.status}">${rotuloStatus(filme.status)}</span>
       <div class="acoes">
-        <button type="button">Editar</button>
-        <button type="button">Remover</button>
+        <button type="button" class="btn-editar">Editar</button>
+        <button type="button" class="btn-remover">Remover</button>
       </div>
     </article>
   `).join("");
@@ -98,9 +101,54 @@ function renderizarCards(lista) {
   secaoLista.innerHTML = `<h2>Filmes</h2>${cards}`;
 }
 
-renderizarCards(filmesIniciais);
+function filtrarPorStatus(status) {
+  if (status === "todos") return filmes;
+  return filmes.filter((filme) => filme.status === status);
+}
 
-const rodape = document.querySelector("#total-filmes");
-if (rodape) {
-  rodape.textContent = `CineTrack © 2026 · ${filmesIniciais.length} filmes cadastrados.`;
+function atualizarTotal() {
+  const rodape = document.querySelector("#total-filmes");
+
+  if (rodape) {
+    rodape.textContent = `CineTrack © 2026 · ${filmes.length} filmes cadastrados.`;
+  }
+}
+
+renderizarCards(filmes);
+atualizarTotal();
+
+const secaoLista = document.querySelector("#lista");
+
+if (secaoLista) {
+  secaoLista.addEventListener("click", (evento) => {
+    const botaoRemover = evento.target.closest(".btn-remover");
+
+    if (!botaoRemover) return;
+
+    const card = botaoRemover.closest(".card");
+    const id = Number(card.dataset.id);
+    const filme = filmes.find((item) => item.id === id);
+
+    if (!filme || !confirm(`Deseja remover "${filme.titulo}"?`)) return;
+
+    filmes = filmes.filter((item) => item.id !== id);
+    renderizarCards(filtrarPorStatus(filtroAtivo));
+    atualizarTotal();
+  });
+}
+
+const navegacao = document.querySelector("nav");
+
+if (navegacao) {
+  navegacao.addEventListener("click", (evento) => {
+    const botaoFiltro = evento.target.closest("button[data-status]");
+
+    if (!botaoFiltro) return;
+
+    navegacao.querySelector(".ativo")?.classList.remove("ativo");
+    botaoFiltro.classList.add("ativo");
+
+    filtroAtivo = botaoFiltro.dataset.status;
+    renderizarCards(filtrarPorStatus(filtroAtivo));
+  });
 }
