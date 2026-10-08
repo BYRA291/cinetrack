@@ -1,3 +1,66 @@
+const filmesIniciais = [
+  {
+    id: 1,
+    titulo: "A Origem",
+    ano: 2010,
+    genero: "Ficção científica",
+    poster: "https://image.tmdb.org/t/p/w200/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+    nota: 4,
+    status: "assistido",
+    comentario: "Um suspense de ficção científica sobre sonhos dentro de sonhos."
+  },
+  {
+    id: 2,
+    titulo: "Parasita",
+    ano: 2019,
+    genero: "Suspense",
+    poster: "https://image.tmdb.org/t/p/w200/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    nota: 5,
+    status: "assistido",
+    comentario: "Uma crítica social marcada por reviravoltas."
+  },
+  {
+    id: 3,
+    titulo: "O Auto da Compadecida",
+    ano: 2000,
+    genero: "Comédia",
+    poster: "https://image.tmdb.org/t/p/w500/imcOp1kJsCsAFCoOtY5OnPrFbAf.jpg",
+    nota: 5,
+    status: "assistido",
+    comentario: "Comédia brasileira inspirada na obra de Ariano Suassuna."
+  },
+  {
+    id: 4,
+    titulo: "Duna: Parte Dois",
+    ano: 2024,
+    genero: "Ficção científica",
+    poster: "https://image.tmdb.org/t/p/w200/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+    nota: 5,
+    status: "assistindo",
+    comentario: "Continuação da jornada de Paul Atreides em Arrakis."
+  },
+  {
+    id: 5,
+    titulo: "Interestelar",
+    ano: 2014,
+    genero: "Ficção científica",
+    poster: "https://image.tmdb.org/t/p/w200/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    nota: 5,
+    status: "quero",
+    comentario: "Uma viagem espacial em busca de um novo lar para a humanidade."
+  },
+  {
+    id: 6,
+    titulo: "Cidade de Deus",
+    ano: 2002,
+    genero: "Drama",
+    poster: "https://image.tmdb.org/t/p/w500/gfnXixcGC060QcG6JPxN6AMdVsq.jpg",
+    nota: 4,
+    status: "quero",
+    comentario: "Drama brasileiro sobre a vida na Cidade de Deus."
+  }
+];
+
 function rotuloStatus(status) {
   if (status === "assistido") return "Assistido";
   if (status === "assistindo") return "Assistindo";
@@ -13,42 +76,31 @@ const estrelas = (nota) => {
   return texto;
 };
 
-console.log(rotuloStatus("quero"), estrelas(3));
+function renderizarCards(lista) {
+  const secaoLista = document.querySelector("#lista");
 
-const primeiroCard = document.querySelector(".card");
+  if (!secaoLista) return;
 
-if (primeiroCard) {
-  const badge = primeiroCard.querySelector(".badge");
-  if (badge) {
-    badge.textContent = rotuloStatus("assistido");
-  }
+  const cards = lista.map((filme) => `
+    <article class="card" data-id="${filme.id}">
+      <img src="${filme.poster}" alt="Pôster do filme ${filme.titulo}" width="80" height="120">
+      <h2>${filme.titulo}</h2>
+      <p>${filme.ano} · ${filme.genero}</p>
+      <p>Nota: <span role="img" aria-label="Nota: ${filme.nota} de 5">${estrelas(filme.nota)}</span></p>
+      <span class="badge ${filme.status}">${rotuloStatus(filme.status)}</span>
+      <div class="acoes">
+        <button type="button">Editar</button>
+        <button type="button">Remover</button>
+      </div>
+    </article>
+  `).join("");
 
-  const nota = primeiroCard.querySelector("span[role='img']");
-  if (nota) {
-    const valor = 4;
-    nota.textContent = estrelas(valor);
-    nota.setAttribute("aria-label", `Nota: ${valor} de 5`);
-  }
+  secaoLista.innerHTML = `<h2>Filmes</h2>${cards}`;
 }
 
-const cards = document.querySelectorAll(".card");
-const TOTAL = 6;
+renderizarCards(filmesIniciais);
 
-for (const card of cards) {
-  const badge = card.querySelector(".badge");
-  const nota = card.querySelector("span[role='img']");
-
-  if (badge) {
-    badge.textContent = rotuloStatus(badge.classList.contains("assistido") ? "assistido" : badge.classList.contains("assistindo") ? "assistindo" : "quero");
-  }
-
-  if (nota) {
-    const valor = Number(nota.getAttribute("aria-label").match(/\d+/)?.[0] || 5);
-    nota.textContent = estrelas(valor);
-  }
-}
-
-const rodape = document.querySelector("small");
+const rodape = document.querySelector("#total-filmes");
 if (rodape) {
-  rodape.textContent = `CineTrack © 2026 · ${TOTAL} filmes cadastrados.`;
+  rodape.textContent = `CineTrack © 2026 · ${filmesIniciais.length} filmes cadastrados.`;
 }
