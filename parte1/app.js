@@ -61,8 +61,22 @@ const filmesIniciais = [
   }
 ];
 
-let filmes = [...filmesIniciais];
+const CHAVE_FILMES = "cinetrack:filmes";
+const lerFilmesSalvos = () => {
+  try {
+    const dados = localStorage.getItem(CHAVE_FILMES);
+    if (dados === null) return [...filmesIniciais];
+
+    const filmesSalvos = JSON.parse(dados);
+    return Array.isArray(filmesSalvos) ? filmesSalvos : [...filmesIniciais];
+  } catch {
+    return [...filmesIniciais];
+  }
+};
+
+let filmes = lerFilmesSalvos();
 let filtroAtivo = "todos";
+let buscaAtual = "";
 let editandoId = null;
 
 function rotuloStatus(status) {
@@ -143,9 +157,26 @@ function renderizarCards(lista) {
   secaoLista.replaceChildren(titulo, fragmento);
 }
 
-function filtrarPorStatus(status) {
-  if (status === "todos") return filmes;
-  return filmes.filter((filme) => filme.status === status);
+function normalizarTexto(texto) {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
+}
+
+function atualizar() {
+  const termo = normalizarTexto(buscaAtual);
+  const listaFiltrada = filmes.filter((filme) => {
+    const correspondeStatus = filtroAtivo === "todos" || filme.status === filtroAtivo;
+    const titulo = normalizarTexto(filme.titulo);
+    return correspondeStatus && titulo.includes(termo);
+  });
+  renderizarCards(listaFiltrada);
+}
+
+function salvarFilmes() {
+  try {
+    localStorage.setItem(CHAVE_FILMES, JSON.stringify(filmes));
+  } catch {
+    mostrarErros(["Não foi possível salvar os filmes neste navegador."]);
+  }
 }
 
 function atualizarTotal() {
@@ -235,7 +266,7 @@ function abrirEdicao(filme) {
   formulario.elements.comentario.value = filme.comentario;
 }
 
-renderizarCards(filmes);
+atualizar();
 atualizarTotal();
 
 document.querySelector("#btn-adicionar").addEventListener("click", abrir);
@@ -273,7 +304,8 @@ formulario.addEventListener("submit", (evento) => {
     );
   }
 
-  renderizarCards(filtrarPorStatus(filtroAtivo));
+  salvarFilmes();
+  atualizar();
   atualizarTotal();
   fechar();
 });
@@ -303,7 +335,8 @@ if (secaoLista) {
     if (!filme || !confirm(`Deseja remover "${filme.titulo}"?`)) return;
 
     filmes = filmes.filter((item) => item.id !== id);
-    renderizarCards(filtrarPorStatus(filtroAtivo));
+    salvarFilmes();
+    atualizar();
     atualizarTotal();
   });
 }
@@ -320,6 +353,13 @@ if (navegacao) {
     botaoFiltro.classList.add("ativo");
 
     filtroAtivo = botaoFiltro.dataset.status;
-    renderizarCards(filtrarPorStatus(filtroAtivo));
+    atualizar();
   });
 }
+
+document.querySelector("#busca")?.addEventListener("input", (evento) => {
+  buscaAtual = evento.target.value.trim();
+  atualizar();
+});
+
+
