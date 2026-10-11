@@ -175,6 +175,18 @@ nav button:hover {
     border-color: var(--cor-acento);
 }
 
+nav label {
+    align-self: center;
+    margin-left: auto;
+}
+
+#ordenar {
+    min-height: 38px;
+    padding: 5px 10px;
+    border: 1px solid var(--cor-primaria);
+    border-radius: 4px;
+}
+
 #lista {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

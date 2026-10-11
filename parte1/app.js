@@ -77,6 +77,7 @@ const lerFilmesSalvos = () => {
 let filmes = lerFilmesSalvos();
 let filtroAtivo = "todos";
 let buscaAtual = "";
+let ordenacaoAtual = "titulo";
 let editandoId = null;
 
 function rotuloStatus(status) {
@@ -168,7 +169,13 @@ function atualizar() {
     const titulo = normalizarTexto(filme.titulo);
     return correspondeStatus && titulo.includes(termo);
   });
-  renderizarCards(listaFiltrada);
+  const listaOrdenada = [...listaFiltrada].sort((a, b) => {
+    if (ordenacaoAtual === "ano") return a.ano - b.ano;
+    if (ordenacaoAtual === "nota") return b.nota - a.nota;
+    return a.titulo.localeCompare(b.titulo, "pt-BR", { sensitivity: "base" });
+  });
+
+  renderizarCards(listaOrdenada);
 }
 
 function salvarFilmes() {
@@ -359,6 +366,11 @@ if (navegacao) {
 
 document.querySelector("#busca")?.addEventListener("input", (evento) => {
   buscaAtual = evento.target.value.trim();
+  atualizar();
+});
+
+document.querySelector("#ordenar")?.addEventListener("change", (evento) => {
+  ordenacaoAtual = evento.target.value;
   atualizar();
 });
 
