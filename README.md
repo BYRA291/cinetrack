@@ -21,6 +21,27 @@ Depois acesse `http://localhost:8000/`.
 - Persistência local em `localStorage` na chave `cinetrack:filmes`.
 - Dados canônicos iniciais: seis filmes carregados quando ainda não há dados salvos.
 - Modal de cadastro/edição fechável por Cancelar ou Escape.
+- Navegação acessível por teclado, foco contido no modal e estados dos filtros anunciados por leitores de tela.
+- Pôsteres iniciais reais servidos pela CDN da TMDB, sem exigir chave de API no navegador.
+
+## Persistência e busca
+
+Os filmes são serializados em JSON no `localStorage`, usando a chave `cinetrack:filmes`. Na primeira visita — ou se os dados armazenados forem inválidos — a aplicação carrega os seis filmes iniciais.
+
+A busca aguarda 300 ms após a digitação antes de atualizar a lista. Ela ignora acentos e diferenças entre letras maiúsculas e minúsculas e pode ser combinada com os filtros de status e a ordenação.
+
+Para restaurar os dados iniciais, execute no console do navegador:
+
+```javascript
+localStorage.removeItem("cinetrack:filmes");
+location.reload();
+```
+
+## Acessibilidade
+
+A interface usa HTML semântico, rótulos associados aos campos, mensagens dinâmicas anunciadas, indicação programática do filtro ativo e gerenciamento de foco no modal. As cores foram ajustadas para contraste e animações são reduzidas quando essa preferência está habilitada no sistema.
+
+Para conferir com o Lighthouse, sirva a pasta localmente, abra as ferramentas do desenvolvedor e execute a auditoria de acessibilidade sobre `http://localhost:8000/`. A meta do projeto é pontuação igual ou superior a 90.
 
 ## Validação
 

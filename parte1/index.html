@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Organize os filmes que você assistiu ou quer assistir.">
     <title>CineTrack - Catálogo de Filmes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <h1>CineTrack</h1>
-        <input type="search" id="busca" name="busca" aria-label="Buscar filme" placeholder="Buscar título">
+        <label class="visualmente-oculto" for="busca">Buscar filme por título</label>
+        <input type="search" id="busca" name="busca" placeholder="Buscar título" autocomplete="off">
         <button type="button" id="btn-adicionar">
             <span class="texto-curto">+</span>
             <span class="texto-completo">+ Adicionar</span>
@@ -17,10 +19,10 @@
     </header>
 
     <nav aria-label="Filtros de status">
-        <button type="button" class="ativo" data-status="todos">Todos</button>
-        <button type="button" data-status="assistido">Assistido</button>
-        <button type="button" data-status="assistindo">Assistindo</button>
-        <button type="button" data-status="quero">Quero assistir</button>
+        <button type="button" class="ativo" data-status="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-status="assistido" aria-pressed="false">Assistido</button>
+        <button type="button" data-status="assistindo" aria-pressed="false">Assistindo</button>
+        <button type="button" data-status="quero" aria-pressed="false">Quero assistir</button>
         <label for="ordenar">Ordenar:</label>
         <select id="ordenar" name="ordenar">
             <option value="titulo">Título (A-Z)</option>
@@ -39,28 +41,29 @@
         <small id="total-filmes">CineTrack © 2026 · 6 filmes cadastrados.</small>
     </footer>
 
-    <div id="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal" hidden>
+    <div id="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal" aria-describedby="instrucao-modal" hidden>
         <div class="modal-conteudo">
             <h1 id="titulo-modal">Adicionar filme</h1>
+            <p id="instrucao-modal">Preencha os dados do filme. Campos obrigatórios estão identificados.</p>
 
         <form id="form-filme" novalidate>
             <div id="erros-form" role="alert" aria-live="assertive"></div>
 
             <div>
-                <label for="titulo">Título</label><br>
-                <input type="text" id="titulo" name="titulo" required>
+                <label for="titulo">Título (obrigatório)</label><br>
+                <input type="text" id="titulo" name="titulo" required autocomplete="off">
             </div>
             <br>
 
             <div>
-                <label for="ano">Ano</label><br>
+                <label for="ano">Ano (obrigatório)</label><br>
                 <input type="number" id="ano" name="ano" min="1888" max="2030" required>
             </div>
             <br>
 
             <div>
-                <label for="genero">Gênero</label><br>
-                <input type="text" id="genero" name="genero" required>
+                <label for="genero">Gênero (obrigatório)</label><br>
+                <input type="text" id="genero" name="genero" required autocomplete="off">
             </div>
             <br>
 
@@ -71,7 +74,7 @@
             <br>
 
             <div>
-                <label for="status">Status</label><br>
+                <label for="status">Status (obrigatório)</label><br>
                 <select id="status" name="status" required>
                     <option value="quero">Quero assistir</option>
                     <option value="assistindo">Assistindo</option>
@@ -81,8 +84,8 @@
             <br>
 
             <div>
-                <label for="nota">Nota (1 a 5)</label><br>
-                <input type="number" id="nota" name="nota" min="1" max="5">
+                <label for="nota">Nota (obrigatória, de 1 a 5)</label><br>
+                <input type="number" id="nota" name="nota" min="1" max="5" required>
             </div>
             <br>
 

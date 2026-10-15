@@ -62,7 +62,8 @@ const filmesIniciais = [
 ];
 
 const CHAVE_FILMES = "cinetrack:filmes";
-const lerFilmesSalvos = () => {
+
+function carregar() {
   try {
     const dados = localStorage.getItem(CHAVE_FILMES);
     if (dados === null) return [...filmesIniciais];
@@ -72,13 +73,14 @@ const lerFilmesSalvos = () => {
   } catch {
     return [...filmesIniciais];
   }
-};
+}
 
-let filmes = lerFilmesSalvos();
-let filtroAtivo = "todos";
+let filmes = carregar();
+let statusAtual = "todos";
 let buscaAtual = "";
 let ordenacaoAtual = "titulo";
 let editandoId = null;
+let elementoFocoAnterior = null;
 
 function rotuloStatus(status) {
   if (status === "assistido") return "Assistido";
@@ -105,6 +107,7 @@ function criarCard(filme) {
   poster.alt = `Pôster do filme ${filme.titulo}`;
   poster.width = 80;
   poster.height = 120;
+  poster.loading = "lazy";
 
   const titulo = document.createElement("h2");
   titulo.textContent = filme.titulo;
@@ -132,11 +135,13 @@ function criarCard(filme) {
   botaoEditar.type = "button";
   botaoEditar.classList.add("btn-editar");
   botaoEditar.textContent = "Editar";
+  botaoEditar.setAttribute("aria-label", `Editar ${filme.titulo}`);
 
   const botaoRemover = document.createElement("button");
   botaoRemover.type = "button";
   botaoRemover.classList.add("btn-remover");
   botaoRemover.textContent = "Remover";
+  botaoRemover.setAttribute("aria-label", `Remover ${filme.titulo}`);
 
   acoes.append(botaoEditar, botaoRemover);
   card.append(poster, titulo, informacoes, avaliacao, badge, acoes);
@@ -155,6 +160,13 @@ function renderizarCards(lista) {
   const fragmento = document.createDocumentFragment();
   lista.forEach((filme) => fragmento.append(criarCard(filme)));
 
+  if (lista.length === 0) {
+    const mensagem = document.createElement("p");
+    mensagem.classList.add("lista-vazia");
+    mensagem.textContent = "Nenhum filme encontrado.";
+    fragmento.append(mensagem);
+  }
+
   secaoLista.replaceChildren(titulo, fragmento);
 }
 
@@ -162,14 +174,17 @@ function normalizarTexto(texto) {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR");
 }
 
-function atualizar() {
+function aplicarFiltros() {
   const termo = normalizarTexto(buscaAtual);
-  const listaFiltrada = filmes.filter((filme) => {
-    const correspondeStatus = filtroAtivo === "todos" || filme.status === filtroAtivo;
+  return filmes.filter((filme) => {
+    const correspondeStatus = statusAtual === "todos" || filme.status === statusAtual;
     const titulo = normalizarTexto(filme.titulo);
     return correspondeStatus && titulo.includes(termo);
   });
-  const listaOrdenada = [...listaFiltrada].sort((a, b) => {
+}
+
+function atualizar() {
+  const listaOrdenada = [...aplicarFiltros()].sort((a, b) => {
     if (ordenacaoAtual === "ano") return a.ano - b.ano;
     if (ordenacaoAtual === "nota") return b.nota - a.nota;
     return a.titulo.localeCompare(b.titulo, "pt-BR", { sensitivity: "base" });
@@ -178,7 +193,7 @@ function atualizar() {
   renderizarCards(listaOrdenada);
 }
 
-function salvarFilmes() {
+function salvar() {
   try {
     localStorage.setItem(CHAVE_FILMES, JSON.stringify(filmes));
   } catch {
@@ -249,14 +264,19 @@ function abrir() {
   editandoId = null;
   mostrarErros([]);
   tituloModal.textContent = "Adicionar filme";
+  elementoFocoAnterior = document.activeElement;
   modal.hidden = false;
+  document.body.classList.add("modal-aberto");
   formulario.elements.titulo.focus();
 }
 
 function fechar() {
   modal.hidden = true;
+  document.body.classList.remove("modal-aberto");
   editandoId = null;
   mostrarErros([]);
+  elementoFocoAnterior?.focus();
+  elementoFocoAnterior = null;
 }
 
 function abrirEdicao(filme) {
@@ -280,7 +300,23 @@ document.querySelector("#btn-adicionar").addEventListener("click", abrir);
 document.querySelector("#btn-cancelar").addEventListener("click", fechar);
 
 document.addEventListener("keydown", (evento) => {
-  if (evento.key === "Escape" && !modal.hidden) fechar();
+  if (modal.hidden) return;
+  if (evento.key === "Escape") fechar();
+
+  if (evento.key === "Tab") {
+    const elementos = [...modal.querySelectorAll("button, input, select, textarea")]
+      .filter((elemento) => !elemento.disabled);
+    const primeiro = elementos[0];
+    const ultimo = elementos.at(-1);
+
+    if (evento.shiftKey && document.activeElement === primeiro) {
+      evento.preventDefault();
+      ultimo.focus();
+    } else if (!evento.shiftKey && document.activeElement === ultimo) {
+      evento.preventDefault();
+      primeiro.focus();
+    }
+  }
 });
 
 formulario.addEventListener("submit", (evento) => {
@@ -311,7 +347,7 @@ formulario.addEventListener("submit", (evento) => {
     );
   }
 
-  salvarFilmes();
+  salvar();
   atualizar();
   atualizarTotal();
   fechar();
@@ -342,7 +378,7 @@ if (secaoLista) {
     if (!filme || !confirm(`Deseja remover "${filme.titulo}"?`)) return;
 
     filmes = filmes.filter((item) => item.id !== id);
-    salvarFilmes();
+    salvar();
     atualizar();
     atualizarTotal();
   });
@@ -356,18 +392,33 @@ if (navegacao) {
 
     if (!botaoFiltro) return;
 
-    navegacao.querySelector(".ativo")?.classList.remove("ativo");
+    const filtroAnterior = navegacao.querySelector(".ativo");
+    filtroAnterior?.classList.remove("ativo");
+    filtroAnterior?.setAttribute("aria-pressed", "false");
     botaoFiltro.classList.add("ativo");
+    botaoFiltro.setAttribute("aria-pressed", "true");
 
-    filtroAtivo = botaoFiltro.dataset.status;
+    statusAtual = botaoFiltro.dataset.status;
     atualizar();
   });
 }
 
-document.querySelector("#busca")?.addEventListener("input", (evento) => {
+function debounce(funcao, espera) {
+  let temporizador;
+
+  return (...argumentos) => {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => funcao(...argumentos), espera);
+  };
+}
+
+function aoDigitar(evento) {
   buscaAtual = evento.target.value.trim();
   atualizar();
-});
+}
+
+const busca = document.querySelector("#busca");
+busca.addEventListener("input", debounce(aoDigitar, 300));
 
 document.querySelector("#ordenar")?.addEventListener("change", (evento) => {
   ordenacaoAtual = evento.target.value;

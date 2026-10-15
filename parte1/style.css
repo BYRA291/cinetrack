@@ -15,8 +15,8 @@
 
 :root {
     --cor-primaria: #243B5A;
-    --cor-acento: #E76F51;
-    --cor-acento-hover: #D85B3F;
+    --cor-acento: #B7442A;
+    --cor-acento-hover: #98351F;
 
     --cor-fundo: #F1F3F5;
     --cor-superficie: #FFFFFF;
@@ -63,6 +63,22 @@ body {
     color: var(--cor-texto);
     background: var(--cor-fundo);
     line-height: 1.5;
+}
+
+.modal-aberto {
+    overflow: hidden;
+}
+
+.visualmente-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 header {
@@ -197,6 +213,10 @@ nav label {
 #lista > h2 {
     grid-column: 1 / -1;
     font-size: 1.5rem;
+}
+
+.lista-vazia {
+    grid-column: 1 / -1;
 }
 
 .card {
@@ -516,5 +536,16 @@ body > form {
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
     }
 }
