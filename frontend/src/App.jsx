@@ -1,25 +1,28 @@
-import Titulo from "./components/Titulo.jsx";
-
-const anoAtual = new Date().getFullYear();
+import { filmesIniciais } from "./data/filmes.js";
+import Filtros from "./components/Filtros.jsx";
+import Header from "./components/Header.jsx";
+import ListaFilmes from "./components/ListaFilmes.jsx";
 
 function App() {
   return (
-    <main className="pagina">
-      <Titulo />
-
-      <section className="apresentacao" aria-labelledby="boas-vindas">
-        <p className="chamada">SEU CINEMA EM UM SÓ LUGAR</p>
-        <h2 id="boas-vindas">Bem-vindo ao CineTrack</h2>
-        <p>
-          Um espaço para organizar os filmes que você já assistiu e os que
-          ainda quer descobrir.
-        </p>
-      </section>
-
+    <div className="pagina">
+      <Header />
+      <main className="conteudo">
+        <div className="cabecalho-lista">
+          <div>
+            <p className="sobretitulo">SUA COLEÇÃO</p>
+            <h2>Minha lista de filmes</h2>
+          </div>
+          <span className="total-filmes">{filmesIniciais.length} títulos</span>
+        </div>
+        <Filtros />
+        <ListaFilmes filmes={filmesIniciais} />
+      </main>
       <footer className="rodape">
-        &copy; {anoAtual} CineTrack
+        <span>CineTrack</span>
+        <small>Uma boa história merece ser lembrada.</small>
       </footer>
-    </main>
+    </div>
   );
 }
 
