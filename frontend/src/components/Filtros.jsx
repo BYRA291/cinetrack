@@ -5,15 +5,16 @@ const opcoesStatus = [
   { valor: "quero", rotulo: "Quero assistir" },
 ];
 
-function Filtros() {
+function Filtros({ ativo, aoMudar }) {
   return (
     <nav className="filtros" aria-label="Filtros de status">
-      {opcoesStatus.map(({ valor, rotulo }, indice) => (
+      {opcoesStatus.map(({ valor, rotulo }) => (
         <button
           key={valor}
           type="button"
-          className={indice === 0 ? "filtro ativo" : "filtro"}
-          aria-pressed={indice === 0}
+          className={ativo === valor ? "filtro ativo" : "filtro"}
+          aria-pressed={ativo === valor}
+          onClick={() => aoMudar(valor)}
         >
           {rotulo}
         </button>

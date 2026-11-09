@@ -13,7 +13,7 @@ python -m http.server 8000
 
 Depois acesse `http://localhost:8000/`.
 
-## Frontend React (Aula 1)
+## Frontend React
 
 O projeto React com Vite fica em `frontend/`, separado da aplicação original
 em `parte1/`. Para executá-lo:
@@ -24,8 +24,8 @@ npm install
 npm run dev
 ```
 
-O componente `Titulo` está em `src/components/Titulo.jsx` e é composto por
-`App` em `src/App.jsx`. O ano do rodapé é exibido dinamicamente com JSX.
+O catálogo React é composto por componentes em `src/components/`. Os filtros
+por status e a busca por título são controlados pelo estado de `App`.
 
 ## Funcionalidades
 
