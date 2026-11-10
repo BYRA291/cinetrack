@@ -60,3 +60,8 @@ export const filmesIniciais = [
     comentario: "Drama brasileiro sobre a vida na Cidade de Deus.",
   },
 ];
+
+export function gerarId(filmes) {
+  if (filmes.length === 0) return 1;
+  return Math.max(...filmes.map((filme) => filme.id)) + 1;
+}

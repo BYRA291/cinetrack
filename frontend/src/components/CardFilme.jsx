@@ -5,7 +5,7 @@ function rotuloStatus(status) {
   return status;
 }
 
-function CardFilme({ filme }) {
+function CardFilme({ filme, aoEditar, aoRemover }) {
   const estrelas = Array.from({ length: 5 }, (_, indice) =>
     indice < filme.nota ? "★" : "☆",
   ).join("");
@@ -31,6 +31,10 @@ function CardFilme({ filme }) {
         </p>
         <span className={`badge ${filme.status}`}>{rotuloStatus(filme.status)}</span>
         {filme.comentario && <p className="comentario">{filme.comentario}</p>}
+        <div className="acoes-card">
+          <button type="button" onClick={aoEditar}>Editar</button>
+          <button type="button" className="botao-remover" onClick={aoRemover}>Remover</button>
+        </div>
       </div>
     </article>
   );
