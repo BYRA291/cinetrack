@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { filmesIniciais, gerarId } from "./data/filmes.js";
+import { useEffect, useState } from "react";
+import { gerarId } from "./data/filmes.js";
+import { listar } from "./api.js";
 import Filtros from "./components/Filtros.jsx";
 import Header from "./components/Header.jsx";
 import ListaFilmes from "./components/ListaFilmes.jsx";
@@ -8,8 +9,28 @@ import ModalFilme from "./components/ModalFilme.jsx";
 function App() {
   const [status, setStatus] = useState("todos");
   const [busca, setBusca] = useState("");
-  const [filmes, setFilmes] = useState(filmesIniciais);
+  const [filmes, setFilmes] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
   const [filmeEmEdicao, setFilmeEmEdicao] = useState(null);
+
+  useEffect(() => {
+    listar()
+      .then((dados) => {
+        setFilmes(dados);
+        setErro(null);
+      })
+      .catch((erroCarregamento) => {
+        setErro(erroCarregamento);
+      })
+      .finally(() => {
+        setCarregando(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    document.title = `CineTrack (${filmes.length})`;
+  }, [filmes.length]);
 
   function adicionar(dados) {
     setFilmes((atuais) => [...atuais, { ...dados, id: gerarId(atuais) }]);
@@ -51,7 +72,15 @@ function App() {
           </div>
         </div>
         <Filtros ativo={status} aoMudar={setStatus} />
-        <ListaFilmes filmes={visiveis} aoEditar={setFilmeEmEdicao} aoRemover={remover} />
+        {carregando ? (
+          <p className="estado-lista" role="status">Carregando filmes...</p>
+        ) : erro ? (
+          <p className="estado-lista estado-erro" role="alert">
+            {erro.message}
+          </p>
+        ) : (
+          <ListaFilmes filmes={visiveis} aoEditar={setFilmeEmEdicao} aoRemover={remover} />
+        )}
       </main>
       {filmeEmEdicao !== null && (
         <ModalFilme

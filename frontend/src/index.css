@@ -106,6 +106,8 @@ button { font: inherit; }
 .botoes-modal { display: flex; justify-content: flex-end; gap: 9px; margin-top: 5px; }
 .botao-cancelar { padding: 10px 14px; border: 1px solid #dce3e7; border-radius: 9px; background: #fff; color: #42535e; cursor: pointer; }
 .lista-vazia { margin: 0; padding: 30px 16px; border: 1px dashed #d6dfe4; border-radius: 12px; color: #64727c; text-align: center; }
+.estado-lista { margin: 0; padding: 30px 16px; border: 1px solid #dce3e7; border-radius: 12px; color: #64727c; text-align: center; }
+.estado-erro { border-color: #e0bcbc; background: #fff7f7; color: #a33d3d; }
 .visualmente-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 
 .rodape { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 42px; border-top: 1px solid #e8ecef; color: #64727c; font-size: 0.8rem; }
