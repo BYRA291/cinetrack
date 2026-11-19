@@ -72,6 +72,11 @@ function App() {
           </div>
         </div>
         <Filtros ativo={status} aoMudar={setStatus} />
+        {!carregando && !erro && (
+          <p className="contador-filmes">
+            Exibindo {visiveis.length} de {filmes.length} filmes
+          </p>
+        )}
         {carregando ? (
           <p className="estado-lista" role="status">Carregando filmes...</p>
         ) : erro ? (

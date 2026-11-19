@@ -1,15 +1,7 @@
-function rotuloStatus(status) {
-  if (status === "assistido") return "Assistido";
-  if (status === "assistindo") return "Assistindo";
-  if (status === "quero") return "Quero assistir";
-  return status;
-}
+import Badge from "./Badge.jsx";
+import Estrelas from "./Estrelas.jsx";
 
 function CardFilme({ filme, aoEditar, aoRemover }) {
-  const estrelas = Array.from({ length: 5 }, (_, indice) =>
-    indice < filme.nota ? "★" : "☆",
-  ).join("");
-
   return (
     <article className="card">
       <img
@@ -25,11 +17,8 @@ function CardFilme({ filme, aoEditar, aoRemover }) {
         <p className="informacoes">
           {filme.ano} <span aria-hidden="true">·</span> {filme.genero}
         </p>
-        <p className="avaliacao">
-          <span className="visualmente-oculto">Nota: {filme.nota} de 5</span>
-          <span aria-hidden="true">{estrelas}</span>
-        </p>
-        <span className={`badge ${filme.status}`}>{rotuloStatus(filme.status)}</span>
+        <p className="avaliacao"><Estrelas nota={filme.nota} /></p>
+        <Badge status={filme.status} />
         {filme.comentario && <p className="comentario">{filme.comentario}</p>}
         <div className="acoes-card">
           <button type="button" onClick={aoEditar}>Editar</button>
