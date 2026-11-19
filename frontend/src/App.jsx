@@ -6,13 +6,29 @@ import Header from "./components/Header.jsx";
 import ListaFilmes from "./components/ListaFilmes.jsx";
 import ModalFilme from "./components/ModalFilme.jsx";
 
+const CHAVE_FILTROS = "cinetrack:filtros";
+
+function lerFiltroSalvo(chave, padrao) {
+  try {
+    const filtrosSalvos = JSON.parse(localStorage.getItem(CHAVE_FILTROS) || "{}");
+    const valor = filtrosSalvos[chave];
+    return typeof valor === typeof padrao ? valor : padrao;
+  } catch {
+    return padrao;
+  }
+}
+
 function App() {
-  const [status, setStatus] = useState("todos");
-  const [busca, setBusca] = useState("");
+  const [status, setStatus] = useState(() => lerFiltroSalvo("status", "todos"));
+  const [busca, setBusca] = useState(() => lerFiltroSalvo("busca", ""));
   const [filmes, setFilmes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
   const [filmeEmEdicao, setFilmeEmEdicao] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem(CHAVE_FILTROS, JSON.stringify({ busca, status }));
+  }, [busca, status]);
 
   useEffect(() => {
     listar()
