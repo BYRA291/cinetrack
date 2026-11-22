@@ -31,11 +31,30 @@ function gerarId(filmes) {
 
 app.get("/filmes", (req, res) => {
   const filmes = lerFilmes();
-  const resultado = req.query.status
-    ? filmes.filter((filme) => filme.status === req.query.status)
-    : filmes;
+  const termoBusca = typeof req.query.q === "string"
+    ? req.query.q.trim().toLocaleLowerCase("pt-BR")
+    : "";
+  const resultado = filmes
+    .filter((filme) => !req.query.status || filme.status === req.query.status)
+    .filter((filme) =>
+      !termoBusca || filme.titulo.toLocaleLowerCase("pt-BR").includes(termoBusca),
+    );
 
   res.json(resultado);
+});
+
+app.get("/stats", (req, res) => {
+  const filmes = lerFilmes();
+  const porStatus = filmes.reduce((contagens, filme) => {
+    contagens[filme.status] = (contagens[filme.status] || 0) + 1;
+    return contagens;
+  }, {});
+  const somaNotas = filmes.reduce((soma, filme) => soma + Number(filme.nota), 0);
+  const mediaNotas = filmes.length === 0
+    ? 0
+    : Number((somaNotas / filmes.length).toFixed(1));
+
+  res.json({ total: filmes.length, porStatus, mediaNotas });
 });
 
 app.get("/filmes/:id", (req, res) => {
