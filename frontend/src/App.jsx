@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { gerarId } from "./data/filmes.js";
-import { listar } from "./api.js";
+import { atualizar, criar, listar, remover as removerFilme } from "./api.js";
 import Filtros from "./components/Filtros.jsx";
 import Header from "./components/Header.jsx";
 import ListaFilmes from "./components/ListaFilmes.jsx";
@@ -48,20 +47,40 @@ function App() {
     document.title = `CineTrack (${filmes.length})`;
   }, [filmes.length]);
 
-  function adicionar(dados) {
-    setFilmes((atuais) => [...atuais, { ...dados, id: gerarId(atuais) }]);
+  async function adicionar(dados) {
+    try {
+      const criado = await criar(dados);
+      setFilmes((atuais) => [...atuais, criado]);
+      setErro(null);
+      setFilmeEmEdicao(null);
+    } catch (erroSalvar) {
+      setErro(erroSalvar);
+    }
   }
 
-  function remover(id) {
-    setFilmes((atuais) => atuais.filter((filme) => filme.id !== id));
+  async function remover(id) {
+    try {
+      await removerFilme(id);
+      setFilmes((atuais) => atuais.filter((filme) => filme.id !== id));
+      setErro(null);
+    } catch (erroRemover) {
+      setErro(erroRemover);
+    }
   }
 
-  function editar(id, alteracoes) {
-    setFilmes((atuais) =>
-      atuais.map((filme) =>
-        filme.id === id ? { ...filme, ...alteracoes } : filme,
-      ),
-    );
+  async function editar(id, alteracoes) {
+    try {
+      const editado = await atualizar(id, alteracoes);
+      setFilmes((atuais) =>
+        atuais.map((filme) =>
+          filme.id === id ? editado : filme,
+        ),
+      );
+      setErro(null);
+      setFilmeEmEdicao(null);
+    } catch (erroEditar) {
+      setErro(erroEditar);
+    }
   }
 
   const termoBusca = busca.trim().toLocaleLowerCase("pt-BR");
@@ -106,11 +125,11 @@ function App() {
       {filmeEmEdicao !== null && (
         <ModalFilme
           filme={filmeEmEdicao.id ? filmeEmEdicao : null}
-          aoSalvar={(dados) => {
-            if (filmeEmEdicao.id) editar(filmeEmEdicao.id, dados);
-            else adicionar(dados);
-            setFilmeEmEdicao(null);
-          }}
+          aoSalvar={(dados) =>
+            filmeEmEdicao.id
+              ? editar(filmeEmEdicao.id, dados)
+              : adicionar(dados)
+          }
           aoFechar={() => setFilmeEmEdicao(null)}
         />
       )}

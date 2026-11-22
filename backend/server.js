@@ -57,6 +57,39 @@ app.get("/stats", (req, res) => {
   res.json({ total: filmes.length, porStatus, mediaNotas });
 });
 
+app.get("/tmdb/search", async (req, res) => {
+  const chave = process.env.TMDB_API_KEY;
+  const consulta = typeof req.query.q === "string" ? req.query.q.trim() : "";
+
+  if (!chave) {
+    return res.status(503).json({ erro: "TMDB_API_KEY não configurada" });
+  }
+
+  if (!consulta) {
+    return res.status(400).json({ erro: "Informe o parâmetro q" });
+  }
+
+  try {
+    const parametro = new URLSearchParams({
+      api_key: chave,
+      query: consulta,
+      language: "pt-BR",
+    });
+    const resposta = await fetch(
+      `https://api.themoviedb.org/3/search/movie?${parametro}`,
+    );
+
+    if (!resposta.ok) {
+      return res.status(resposta.status).json({ erro: "Erro ao consultar o TMDB" });
+    }
+
+    const dados = await resposta.json();
+    res.json(dados.results ?? []);
+  } catch {
+    res.status(502).json({ erro: "Não foi possível consultar o TMDB" });
+  }
+});
+
 app.get("/filmes/:id", (req, res) => {
   const id = Number(req.params.id);
   const filme = lerFilmes().find((item) => item.id === id);

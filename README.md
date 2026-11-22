@@ -13,16 +13,33 @@ python -m http.server 8000
 
 Depois acesse `http://localhost:8000/`.
 
-## Frontend React
+## Como rodar o backend
 
-O projeto React com Vite fica em `frontend/`, separado da aplicação original
-em `parte1/`. Para executá-lo:
+Em um terminal, instale as dependências e copie o arquivo de exemplo de ambiente:
+
+```powershell
+cd backend
+npm install
+Copy-Item .env.example .env
+npm run dev
+```
+
+A API ficará disponível em `http://localhost:3000`. Para usar a busca opcional
+do TMDB, coloque sua chave em `TMDB_API_KEY` no arquivo `backend/.env`.
+
+## Como rodar o frontend
+
+Em outro terminal, instale as dependências e execute o Vite:
 
 ```powershell
 cd frontend
 npm install
 npm run dev
 ```
+
+A interface ficará disponível no endereço mostrado pelo Vite
+(normalmente `http://localhost:5173`). Para apontar o frontend para outra API,
+defina `VITE_API_URL` em `frontend/.env`.
 
 O catálogo React é composto por componentes em `src/components/`. Os filtros
 por status e a busca por título são controlados pelo estado de `App`.
@@ -32,7 +49,7 @@ por status e a busca por título são controlados pelo estado de `App`.
 - Cadastro, edição e remoção de filmes com validação e confirmação.
 - Busca por título combinada com filtros de status.
 - Ordenação por título, ano ou nota, sem alterar a lista armazenada.
-- Persistência local em `localStorage` na chave `cinetrack:filmes`.
+- Persistência dos filmes no arquivo `backend/data/filmes.json`, por meio da API REST.
 - Dados canônicos iniciais: seis filmes carregados quando ainda não há dados salvos.
 - Modal de cadastro/edição fechável por Cancelar ou Escape.
 - Navegação acessível por teclado, foco contido no modal e estados dos filtros anunciados por leitores de tela.
