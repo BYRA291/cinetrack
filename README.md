@@ -57,16 +57,16 @@ por status e a busca por título são controlados pelo estado de `App`.
 
 ## Persistência e busca
 
-Os filmes são serializados em JSON no `localStorage`, usando a chave `cinetrack:filmes`. Na primeira visita — ou se os dados armazenados forem inválidos — a aplicação carrega os seis filmes iniciais.
+Os dados são persistidos no arquivo `backend/data/filmes.json`. Para restaurar
+os seis filmes canônicos, execute `npm run seed` na pasta `backend`.
 
-A busca aguarda 300 ms após a digitação antes de atualizar a lista. Ela ignora acentos e diferenças entre letras maiúsculas e minúsculas e pode ser combinada com os filtros de status e a ordenação.
+A busca por título pode ser feita no endpoint `GET /filmes?q=termo` e o filtro
+por status em `GET /filmes?status=assistido|assistindo|quero`.
 
-Para restaurar os dados iniciais, execute no console do navegador:
+## API REST
 
-```javascript
-localStorage.removeItem("cinetrack:filmes");
-location.reload();
-```
+As operações disponíveis estão documentadas em
+[`docs/api.md`](docs/api.md).
 
 ## Acessibilidade
 
@@ -76,4 +76,4 @@ Para conferir com o Lighthouse, sirva a pasta localmente, abra as ferramentas do
 
 ## Validação
 
-O roteiro dos oito cenários da atividade e seus resultados está em [`docs/testes-parte1.md`](docs/testes-parte1.md).
+O roteiro da validação da API está em [`docs/testes-parte2.md`](docs/testes-parte2.md).

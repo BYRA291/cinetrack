@@ -29,6 +29,34 @@ function gerarId(filmes) {
   return Math.max(...filmes.map((filme) => filme.id)) + 1;
 }
 
+function validarFilme(dados, exigindoTituloEAno) {
+  const erros = [];
+  const possuiTitulo = typeof dados.titulo === "string" && dados.titulo.trim() !== "";
+  const ano = dados.ano;
+  const nota = dados.nota;
+  const status = dados.status;
+
+  if (exigindoTituloEAno && !possuiTitulo) {
+    erros.push("Título é obrigatório");
+  }
+  if (exigindoTituloEAno && (ano === undefined || ano === null || ano === "")) {
+    erros.push("Ano é obrigatório");
+  }
+  if (ano !== undefined && ano !== null && ano !== "" &&
+      (!Number.isInteger(Number(ano)) || Number(ano) < 1888 || Number(ano) > 2100)) {
+    erros.push("Ano deve ser um número inteiro entre 1888 e 2100");
+  }
+  if (nota !== undefined && nota !== null && nota !== "" &&
+      (!Number.isInteger(Number(nota)) || Number(nota) < 1 || Number(nota) > 5)) {
+    erros.push("Nota deve ser um número inteiro entre 1 e 5");
+  }
+  if (status !== undefined && !["assistido", "assistindo", "quero"].includes(status)) {
+    erros.push("Status deve ser assistido, assistindo ou quero");
+  }
+
+  return erros;
+}
+
 app.get("/filmes", (req, res) => {
   const filmes = lerFilmes();
   const termoBusca = typeof req.query.q === "string"
@@ -102,26 +130,25 @@ app.get("/filmes/:id", (req, res) => {
 });
 
 app.post("/filmes", (req, res) => {
-  const { titulo, ano } = req.body || {};
-  if (typeof titulo !== "string" || titulo.trim() === "" || ano === undefined || ano === null || ano === "") {
-    return res.status(400).json({ erro: "Título e ano são obrigatórios" });
+  const dados = req.body && typeof req.body === "object" ? req.body : {};
+  const erros = validarFilme(dados, true);
+  if (erros.length > 0) {
+    return res.status(400).json({ erro: erros[0], erros });
   }
 
   const filmes = lerFilmes();
   const filme = {
     id: gerarId(filmes),
-    titulo: titulo.trim(),
-    ano: Number(ano),
-    genero: req.body.genero ?? "",
-    nota: req.body.nota === undefined ? 0 : Number(req.body.nota),
-    status: req.body.status ?? "quero",
-    comentario: req.body.comentario ?? "",
-    poster: req.body.poster ?? "",
+    titulo: dados.titulo.trim(),
+    ano: Number(dados.ano),
+    genero: dados.genero ?? "",
+    nota: dados.nota === undefined || dados.nota === null || dados.nota === ""
+      ? 0
+      : Number(dados.nota),
+    status: dados.status ?? "quero",
+    comentario: dados.comentario ?? "",
+    poster: dados.poster ?? "",
   };
-
-  if (!Number.isFinite(filme.ano) || !Number.isFinite(filme.nota)) {
-    return res.status(400).json({ erro: "Ano e nota devem ser números válidos" });
-  }
 
   filmes.push(filme);
   salvarFilmes(filmes);
@@ -138,7 +165,18 @@ app.put("/filmes/:id", (req, res) => {
   }
 
   const dados = req.body && typeof req.body === "object" ? req.body : {};
-  const atualizado = { ...existente, ...dados, id };
+  const combinado = { ...existente, ...dados, id };
+  const erros = validarFilme(combinado, true);
+  if (erros.length > 0) {
+    return res.status(400).json({ erro: erros[0], erros });
+  }
+
+  const atualizado = {
+    ...combinado,
+    titulo: combinado.titulo.trim(),
+    ano: Number(combinado.ano),
+    nota: Number(combinado.nota),
+  };
   const atualizados = filmes.map((filme) => filme.id === id ? atualizado : filme);
   salvarFilmes(atualizados);
   res.json(atualizado);
