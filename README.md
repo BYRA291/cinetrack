@@ -1,21 +1,51 @@
 # CineTrack
 
-Catálogo de filmes feito com HTML, CSS e JavaScript, sem dependências externas de execução.
+O projeto tem duas etapas, mantidas em pastas próprias:
 
-## Executar
+- **Parte 1:** catálogo em HTML, CSS e JavaScript, com a coleção salva no navegador.
+- **Parte 2:** frontend React conectado a uma API Node/Express, com a coleção salva pelo backend.
 
-Abra `parte1/index.html` no navegador ou inicie um servidor local na pasta `parte1`:
+As partes são independentes. Para executar a Parte 1, não é necessário iniciar o backend. Para usar a Parte 2, inicie a API e o frontend React em terminais separados.
+
+## Parte 1 — HTML, CSS e JavaScript
+
+A versão original está em `parte1/`. Ela não precisa de `npm` nem de dependências externas.
+
+### Executar
+
+No PowerShell, inicie um servidor local:
 
 ```powershell
 cd parte1
 python -m http.server 8000
 ```
 
-Depois acesse `http://localhost:8000/`.
+Abra `http://localhost:8000/` no navegador.
 
-## Como rodar o backend
+### O que esta parte oferece
 
-Em um terminal, instale as dependências e copie o arquivo de exemplo de ambiente:
+- Cadastro, edição e remoção de filmes no navegador.
+- Busca por título combinada com filtros por status e ordenação por título, ano ou nota.
+- Persistência de toda a coleção em `localStorage`, na chave `cinetrack:filmes`.
+- Modal de cadastro e edição, validação de campos e navegação por teclado.
+- Interface acessível com HTML semântico, anúncios dinâmicos e gerenciamento de foco no modal.
+
+Para restaurar os seis filmes iniciais, abra o console do navegador na página da Parte 1 e execute:
+
+```javascript
+localStorage.removeItem("cinetrack:filmes");
+location.reload();
+```
+
+O roteiro de validação da Parte 1 está em [`docs/testes-parte1.md`](docs/testes-parte1.md). Para conferir a acessibilidade com o Lighthouse, sirva a pasta como acima e execute a auditoria em `http://localhost:8000/`.
+
+## Parte 2 — React e API Node
+
+O frontend React fica em `frontend/` e a API Express em `backend/`. A Parte 2 precisa dos dois serviços em execução.
+
+### 1. Iniciar a API
+
+No PowerShell:
 
 ```powershell
 cd backend
@@ -24,12 +54,13 @@ Copy-Item .env.example .env
 npm run dev
 ```
 
-A API ficará disponível em `http://localhost:3000`. Para usar a busca opcional
-do TMDB, coloque sua chave em `TMDB_API_KEY` no arquivo `backend/.env`.
+A API ficará disponível em `http://localhost:3000`. O arquivo `.env.example` define a porta. A rota opcional `/tmdb/search` requer uma chave `TMDB_API_KEY` em `backend/.env`.
 
-## Como rodar o frontend
+Os filmes ficam em `backend/data/filmes.json`. Para recriar a coleção inicial de seis filmes, execute `npm run seed` dentro de `backend/`.
 
-Em outro terminal, instale as dependências e execute o Vite:
+### 2. Iniciar o frontend
+
+Em outro terminal, também no PowerShell:
 
 ```powershell
 cd frontend
@@ -37,43 +68,18 @@ npm install
 npm run dev
 ```
 
-A interface ficará disponível no endereço mostrado pelo Vite
-(normalmente `http://localhost:5173`). Para apontar o frontend para outra API,
-defina `VITE_API_URL` em `frontend/.env`.
+Abra o endereço que o Vite mostrar, normalmente `http://localhost:5173`. O frontend usa `http://localhost:3000` por padrão. Para apontá-lo a outra API, crie `frontend/.env` com:
 
-O catálogo React é composto por componentes em `src/components/`. Os filtros
-por status e a busca por título são controlados pelo estado de `App`.
+```text
+VITE_API_URL=http://localhost:3000
+```
 
-## Funcionalidades
+### O que esta parte oferece
 
-- Cadastro, edição e remoção de filmes com validação e confirmação.
-- Busca por título combinada com filtros de status.
-- Ordenação por título, ano ou nota, sem alterar a lista armazenada.
-- Persistência dos filmes no arquivo `backend/data/filmes.json`, por meio da API REST.
-- Dados canônicos iniciais: seis filmes carregados quando ainda não há dados salvos.
-- Modal de cadastro/edição fechável por Cancelar ou Escape.
-- Navegação acessível por teclado, foco contido no modal e estados dos filtros anunciados por leitores de tela.
-- Pôsteres iniciais reais servidos pela CDN da TMDB, sem exigir chave de API no navegador.
+- Cadastro, edição e remoção de filmes pela API REST, com validação no backend.
+- Busca por título combinada com filtros por status no React.
+- Persistência da coleção em `backend/data/filmes.json`.
+- Persistência das preferências de busca e status no navegador, na chave `cinetrack:filtros`.
+- Estados de carregamento, erro e lista vazia.
 
-## Persistência e busca
-
-Os dados são persistidos no arquivo `backend/data/filmes.json`. Para restaurar
-os seis filmes canônicos, execute `npm run seed` na pasta `backend`.
-
-A busca por título pode ser feita no endpoint `GET /filmes?q=termo` e o filtro
-por status em `GET /filmes?status=assistido|assistindo|quero`.
-
-## API REST
-
-As operações disponíveis estão documentadas em
-[`docs/api.md`](docs/api.md).
-
-## Acessibilidade
-
-A interface usa HTML semântico, rótulos associados aos campos, mensagens dinâmicas anunciadas, indicação programática do filtro ativo e gerenciamento de foco no modal. As cores foram ajustadas para contraste e animações são reduzidas quando essa preferência está habilitada no sistema.
-
-Para conferir com o Lighthouse, sirva a pasta localmente, abra as ferramentas do desenvolvedor e execute a auditoria de acessibilidade sobre `http://localhost:8000/`. A meta do projeto é pontuação igual ou superior a 90.
-
-## Validação
-
-O roteiro da validação da API está em [`docs/testes-parte2.md`](docs/testes-parte2.md).
+A documentação das rotas está em [`docs/api.md`](docs/api.md). O roteiro de validação da API e do fluxo pela interface está em [`docs/testes-parte2.md`](docs/testes-parte2.md). A API inclui `GET /filmes` (com `q` e `status`), `GET /filmes/:id`, `POST /filmes`, `PUT /filmes/:id`, `DELETE /filmes/:id`, `GET /stats` e `/tmdb/search?q=termo`.
