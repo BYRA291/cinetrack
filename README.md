@@ -1,5 +1,10 @@
 # CineTrack
 
+## Autores
+
+- Bruno Yozo Ricci Assakawa — RA140076
+- Yuri Gabriel Leandro de Paula — RA139460
+
 O projeto tem duas etapas, mantidas em pastas próprias:
 
 - **Parte 1:** catálogo em HTML, CSS e JavaScript, com a coleção salva no navegador.
